@@ -31,6 +31,9 @@ def check_url_availability(tg_chat_id, tg_feed_link):
     try:
         return SESSION.query(RSS).filter(RSS.feed_link == tg_feed_link,
                                          RSS.chat_id == tg_chat_id).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -56,6 +59,9 @@ def remove_url(tg_chat_id, tg_feed_link):
 def get_urls(tg_chat_id):
     try:
         return SESSION.query(RSS).filter(RSS.chat_id == tg_chat_id).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -63,6 +69,9 @@ def get_urls(tg_chat_id):
 def get_all():
     try:
         return SESSION.query(RSS).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 

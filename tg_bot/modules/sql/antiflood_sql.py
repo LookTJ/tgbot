@@ -85,6 +85,9 @@ def __load_flood_settings():
     try:
         all_chats = SESSION.query(FloodControl).all()
         CHAT_FLOOD = {chat.chat_id: (None, DEF_COUNT, chat.limit) for chat in all_chats}
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 

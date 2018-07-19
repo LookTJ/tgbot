@@ -125,6 +125,9 @@ def get_warns(user_id, chat_id):
         reasons = user.reasons
         num = user.num_warns
         return num, reasons
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -162,6 +165,9 @@ def get_chat_warn_triggers(chat_id):
 def get_chat_warn_filters(chat_id):
     try:
         return SESSION.query(WarnFilters).filter(WarnFilters.chat_id == str(chat_id)).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -169,6 +175,9 @@ def get_chat_warn_filters(chat_id):
 def get_warn_filter(chat_id, keyword):
     try:
         return SESSION.query(WarnFilters).get((str(chat_id), keyword))
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -205,6 +214,10 @@ def get_warn_setting(chat_id):
         else:
             return 3, False
 
+    except:
+        SESSION.rollback()
+        raise
+
     finally:
         SESSION.close()
 
@@ -212,6 +225,9 @@ def get_warn_setting(chat_id):
 def num_warns():
     try:
         return SESSION.query(func.sum(Warns.num_warns)).scalar() or 0
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -219,6 +235,9 @@ def num_warns():
 def num_warn_chats():
     try:
         return SESSION.query(func.count(distinct(Warns.chat_id))).scalar()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -226,6 +245,9 @@ def num_warn_chats():
 def num_warn_filters():
     try:
         return SESSION.query(WarnFilters).count()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -233,6 +255,9 @@ def num_warn_filters():
 def num_warn_chat_filters(chat_id):
     try:
         return SESSION.query(WarnFilters.chat_id).filter(WarnFilters.chat_id == str(chat_id)).count()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -240,6 +265,9 @@ def num_warn_chat_filters(chat_id):
 def num_warn_filter_chats():
     try:
         return SESSION.query(func.count(distinct(WarnFilters.chat_id))).scalar()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -256,6 +284,10 @@ def __load_chat_warn_filters():
             WARN_FILTERS[x.chat_id] += [x.keyword]
 
         WARN_FILTERS = {x: sorted(set(y), key=lambda i: (-len(i), i)) for x, y in WARN_FILTERS.items()}
+
+    except:
+        SESSION.rollback()
+        raise
 
     finally:
         SESSION.close()

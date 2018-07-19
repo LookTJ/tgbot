@@ -43,6 +43,9 @@ def chat_should_report(chat_id: Union[str, int]) -> bool:
         if chat_setting:
             return chat_setting.should_report
         return False
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -53,6 +56,9 @@ def user_should_report(user_id: int) -> bool:
         if user_setting:
             return user_setting.should_report
         return True
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 

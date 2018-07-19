@@ -106,6 +106,9 @@ def update_user(user_id, username, chat_id=None, chat_name=None):
 def get_userid_by_name(username):
     try:
         return SESSION.query(Users).filter(func.lower(Users.username) == username.lower()).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -113,6 +116,9 @@ def get_userid_by_name(username):
 def get_name_by_userid(user_id):
     try:
         return SESSION.query(Users).get(Users.user_id == int(user_id)).first()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -120,6 +126,9 @@ def get_name_by_userid(user_id):
 def get_chat_members(chat_id):
     try:
         return SESSION.query(ChatMembers).filter(ChatMembers.chat == str(chat_id)).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -127,6 +136,9 @@ def get_chat_members(chat_id):
 def get_all_chats():
     try:
         return SESSION.query(Chats).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -134,6 +146,9 @@ def get_all_chats():
 def get_user_num_chats(user_id):
     try:
         return SESSION.query(ChatMembers).filter(ChatMembers.user == int(user_id)).count()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -141,6 +156,9 @@ def get_user_num_chats(user_id):
 def num_chats():
     try:
         return SESSION.query(Chats).count()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -148,6 +166,9 @@ def num_chats():
 def num_users():
     try:
         return SESSION.query(Users).count()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 

@@ -190,8 +190,13 @@ def is_locked(chat_id, lock_type):
 
 
 def is_restr_locked(chat_id, lock_type):
-    curr_restr = SESSION.query(Restrictions).get(str(chat_id))
-    SESSION.close()
+    try:
+        curr_restr = SESSION.query(Restrictions).get(str(chat_id))
+    except:
+        SESSION.rollback()
+        raise
+    finally:
+        SESSION.close()
 
     if not curr_restr:
         return False
@@ -211,6 +216,9 @@ def is_restr_locked(chat_id, lock_type):
 def get_locks(chat_id):
     try:
         return SESSION.query(Permissions).get(str(chat_id))
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -218,6 +226,9 @@ def get_locks(chat_id):
 def get_restr(chat_id):
     try:
         return SESSION.query(Restrictions).get(str(chat_id))
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 

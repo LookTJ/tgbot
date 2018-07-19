@@ -46,6 +46,9 @@ def get_rules(chat_id):
 def num_chats():
     try:
         return SESSION.query(func.count(distinct(Rules.chat_id))).scalar()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 

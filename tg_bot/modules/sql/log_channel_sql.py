@@ -55,6 +55,9 @@ def stop_chat_logging(chat_id):
 def num_logchannels():
     try:
         return SESSION.query(func.count(distinct(GroupLogs.chat_id))).scalar()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -76,6 +79,9 @@ def __load_log_channels():
     try:
         all_chats = SESSION.query(GroupLogs).all()
         CHANNELS = {chat.chat_id: chat.log_channel for chat in all_chats}
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 

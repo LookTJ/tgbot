@@ -67,6 +67,9 @@ def get_all_disabled(chat_id):
 def num_chats():
     try:
         return SESSION.query(func.count(distinct(Disable.chat_id))).scalar()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -74,6 +77,9 @@ def num_chats():
 def num_disabled():
     try:
         return SESSION.query(Disable).count()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -97,6 +103,10 @@ def __load_disabled_commands():
         all_chats = SESSION.query(Disable).all()
         for chat in all_chats:
             DISABLED.setdefault(chat.chat_id, set()).add(chat.command)
+
+    except:
+        SESSION.rollback()
+        raise
 
     finally:
         SESSION.close()

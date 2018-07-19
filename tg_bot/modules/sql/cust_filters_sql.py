@@ -72,6 +72,9 @@ CHAT_FILTERS = {}
 def get_all_filters():
     try:
         return SESSION.query(CustomFilters).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -137,6 +140,9 @@ def get_chat_filters(chat_id):
     try:
         return SESSION.query(CustomFilters).filter(CustomFilters.chat_id == str(chat_id)).order_by(
             func.length(CustomFilters.keyword).desc()).order_by(CustomFilters.keyword.asc()).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -144,6 +150,9 @@ def get_chat_filters(chat_id):
 def get_filter(chat_id, keyword):
     try:
         return SESSION.query(CustomFilters).get((str(chat_id), keyword))
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -159,6 +168,9 @@ def get_buttons(chat_id, keyword):
     try:
         return SESSION.query(Buttons).filter(Buttons.chat_id == str(chat_id), Buttons.keyword == keyword).order_by(
             Buttons.id).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -166,6 +178,9 @@ def get_buttons(chat_id, keyword):
 def num_filters():
     try:
         return SESSION.query(CustomFilters).count()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -173,6 +188,9 @@ def num_filters():
 def num_chats():
     try:
         return SESSION.query(func.count(distinct(CustomFilters.chat_id))).scalar()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -189,6 +207,10 @@ def __load_chat_filters():
             CHAT_FILTERS[x.chat_id] += [x.keyword]
 
         CHAT_FILTERS = {x: sorted(set(y), key=lambda i: (-len(i), i)) for x, y in CHAT_FILTERS.items()}
+
+    except:
+        SESSION.rollback()
+        raise
 
     finally:
         SESSION.close()

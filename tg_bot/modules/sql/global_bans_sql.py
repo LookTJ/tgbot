@@ -92,6 +92,9 @@ def is_user_gbanned(user_id):
 def get_gbanned_user(user_id):
     try:
         return SESSION.query(GloballyBannedUsers).get(user_id)
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -99,6 +102,9 @@ def get_gbanned_user(user_id):
 def get_gban_list():
     try:
         return [x.to_dict() for x in SESSION.query(GloballyBannedUsers).all()]
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -140,6 +146,9 @@ def __load_gbanned_userid_list():
     global GBANNED_LIST
     try:
         GBANNED_LIST = {x.user_id for x in SESSION.query(GloballyBannedUsers).all()}
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -148,6 +157,9 @@ def __load_gban_stat_list():
     global GBANSTAT_LIST
     try:
         GBANSTAT_LIST = {x.chat_id for x in SESSION.query(GbanSettings).all() if not x.setting}
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 

@@ -76,6 +76,9 @@ def add_note_to_db(chat_id, note_name, note_data, msgtype, buttons=None, file=No
 def get_note(chat_id, note_name):
     try:
         return SESSION.query(Notes).get((str(chat_id), note_name))
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -102,6 +105,9 @@ def rm_note(chat_id, note_name):
 def get_all_chat_notes(chat_id):
     try:
         return SESSION.query(Notes).filter(Notes.chat_id == str(chat_id)).order_by(Notes.name.asc()).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -117,6 +123,9 @@ def get_buttons(chat_id, note_name):
     try:
         return SESSION.query(Buttons).filter(Buttons.chat_id == str(chat_id), Buttons.note_name == note_name).order_by(
             Buttons.id).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -124,6 +133,9 @@ def get_buttons(chat_id, note_name):
 def num_notes():
     try:
         return SESSION.query(Notes).count()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -131,6 +143,9 @@ def num_notes():
 def num_chats():
     try:
         return SESSION.query(func.count(distinct(Notes.chat_id))).scalar()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 

@@ -223,6 +223,9 @@ def get_welc_buttons(chat_id):
     try:
         return SESSION.query(WelcomeButtons).filter(WelcomeButtons.chat_id == str(chat_id)).order_by(
             WelcomeButtons.id).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
@@ -231,6 +234,9 @@ def get_gdbye_buttons(chat_id):
     try:
         return SESSION.query(GoodbyeButtons).filter(GoodbyeButtons.chat_id == str(chat_id)).order_by(
             GoodbyeButtons.id).all()
+    except:
+        SESSION.rollback()
+        raise
     finally:
         SESSION.close()
 
